@@ -2,21 +2,49 @@
 
 namespace GCrazyGames
 {
+    /// <summary>
+    /// Game player roles
+    /// </summary>
     public enum GOwner
     {
+        /// <summary>
+        /// Unassigned
+        /// </summary>
         Free,
+        /// <summary>
+        /// Primary
+        /// </summary>
         Main,
+        /// <summary>
+        /// Counter
+        /// </summary>
         Enemy
     }
 
+    /// <summary>
+    /// Game utils
+    /// </summary>
     public static class GUtils
     {
+        /// <summary>
+        /// Prefab manager
+        /// </summary>
+        /// <typeparam name="T">Generic mono type</typeparam>
+        /// <param name="aName">Resource name</param>
+        /// <param name="aX">Position at X</param>
+        /// <param name="aY">Position at Y</param>
+        /// <param name="aParent">Parent transform</param>
+        /// <returns></returns>
         public static T CreatePrefab<T>(string aName, int aX, int aY, Transform aParent)
         {
             return Object.Instantiate(Resources.Load<GameObject>("Prefabs/" + aName),
                 new Vector3(aX, aY, 0), Quaternion.identity, aParent).GetComponent<T>();
         }
 
+        /// <summary>
+        /// Getting the coords of the mouse in the world
+        /// </summary>
+        /// <returns>Translated mouse position</returns>
         public static Vector3 GetMousePos()
         {
             var tmpCursorPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
@@ -24,17 +52,17 @@ namespace GCrazyGames
         }
 
         /// <summary>
-        /// Hex цвет в RGB цвет
+        /// Hex color to RGB
         /// </summary>
-        /// <param name="AColor">Hex цвет</param>
-        /// <returns>RGB цвет</returns>
-        public static Color IntToColor(uint AColor)
+        /// <param name="aColor">Hex color</param>
+        /// <returns>RGB color</returns>
+        public static Color IntToColor(uint aColor)
         {
             Color32 LResult = Color.clear;
-            LResult.a = (byte)((AColor) & 0xFF);
-            LResult.b = (byte)((AColor >> 8) & 0xFF);
-            LResult.g = (byte)((AColor >> 16) & 0xFF);
-            LResult.r = (byte)((AColor >> 24) & 0xFF);
+            LResult.a = (byte)((aColor) & 0xFF);
+            LResult.b = (byte)((aColor >> 8) & 0xFF);
+            LResult.g = (byte)((aColor >> 16) & 0xFF);
+            LResult.r = (byte)((aColor >> 24) & 0xFF);
             return LResult;
         }
     }

@@ -1,10 +1,16 @@
 using System.Collections;
 using UnityEngine;
-
 namespace GCrazyGames
 {
+    /// <summary>
+    /// Quadro wall
+    /// </summary>
     public class GWall : GObject
     {
+        /// <summary>
+        /// Enemy animated show
+        /// </summary>
+        /// <returns>Couroutine result</returns>
         private IEnumerator Blink()
         {
             for (float tmpI = 0; tmpI < 1f; tmpI += 0.1f)
@@ -15,6 +21,10 @@ namespace GCrazyGames
             yield return null;
         }
 
+        /// <summary>
+        /// Setting owner type of object
+        /// </summary>
+        /// <param name="aOwner">Owner type</param>
         public override void SetOwner(GOwner aOwner)
         {
             base.SetOwner(aOwner);
