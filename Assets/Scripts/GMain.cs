@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GCrazyGames
 {
@@ -13,7 +13,12 @@ namespace GCrazyGames
         public Transform Map;
         public GameObject Enemy;
         public GameObject Player;
-        public GameObject GameOver;
+        public GameObject Result;
+        public TMP_Text PlayerValue;
+        public TMP_Text EnemyValue;
+        public TMP_Text EnemyWin;
+        public TMP_Text PlayerWin;
+        public TMP_Text FriendlyWin;
 
         private GPoint[,] FPoints;
         private GPoint ActivePoint;
@@ -21,6 +26,13 @@ namespace GCrazyGames
         private GOwner FTurn;
         private int FMapSize;
         private int FLevel;
+        private int FPlayerValue;
+        private int FEnemyValue;
+
+        public void Start()
+        {
+            GoToMenu();
+        }
 
         public void BeginDrag(GPoint aPoint)
         {
@@ -78,6 +90,7 @@ namespace GCrazyGames
         public void GoToMenu()
         {
             Clean();
+            Result.SetActive(false);
             Game.SetActive(false);
             Menu.SetActive(true);
         }
@@ -105,6 +118,7 @@ namespace GCrazyGames
 
         public void StartGame(int aLevel)
         {
+            Result.SetActive(false);
             Menu.SetActive(false);
             Game.SetActive(true);
             Camera.main.transform.position = new Vector3(3 + aLevel - 1, 3 + aLevel - 1, Camera.main.transform.position.z);
@@ -135,15 +149,54 @@ namespace GCrazyGames
         {
             for (int tmpIndex = 0; tmpIndex < Map.childCount; tmpIndex++)
                 Destroy(Map.GetChild(tmpIndex).gameObject);
+            SetPlayerValue(0);
+            SetEnemyValue(0);
+            SetTurn(GOwner.Main);
+        }
+
+        private void ShowResult()
+        {
+            FriendlyWin.gameObject.SetActive(false);
+            EnemyWin.gameObject.SetActive(false);
+            PlayerWin.gameObject.SetActive(false);
+
+            if (FEnemyValue > FPlayerValue)
+                EnemyWin.gameObject.SetActive(true);
+            else if (FEnemyValue < FPlayerValue)
+                PlayerWin.gameObject.SetActive(true);
+            else
+                FriendlyWin.gameObject.SetActive(true);
+
+            SetTurn(GOwner.Enemy);
+            Result.SetActive(true);
+        }
+
+        private void SetPlayerValue(int aValue)
+        {
+            FPlayerValue = aValue;
+            PlayerValue.text = aValue.ToString();
+        }
+
+        private void SetEnemyValue(int aValue)
+        {
+            FEnemyValue = aValue;
+            EnemyValue.text = aValue.ToString();
         }
 
         private void SetTurn(GOwner aOwner)
         {
+            if (Result.activeSelf)
+                return;
+
             FTurn = aOwner;
-            foreach (var tmpPoint in FPoints)
-                tmpPoint.SetEnable(FTurn == GOwner.Main);
             Enemy.SetActive(aOwner != GOwner.Main);
             Player.SetActive(aOwner == GOwner.Main);
+
+            if (FPoints != null)
+            {
+                foreach (var tmpPoint in FPoints)
+                    tmpPoint.SetEnable(FTurn == GOwner.Main);
+            }
         }
 
         private bool AiStepX(GPoint aSource, GPoint aTarget)
@@ -268,9 +321,7 @@ namespace GCrazyGames
             {
                 var tmpX = aSource.X * 2 + aOffset;
                 var tmpY = aSource.Y < aTarget.Y ? aSource.Y * 2 + 1 : aSource.Y * 2 - 1;
-                var tmpTerra = GUtils.CreatePrefab<GTerra>("Terra", tmpX, tmpY, Map);
-                tmpTerra.SetOwner(FTurn);
-                return true;
+                return CreateTerraPrefab(tmpX, tmpY);
             }
             return false;
         }
@@ -281,11 +332,27 @@ namespace GCrazyGames
             {
                 var tmpX = aSource.X < aTarget.X ? aSource.X * 2 + 1 : aSource.X * 2 - 1;
                 var tmpY = aSource.Y * 2 + aOffset;
-                var tmpTerra = GUtils.CreatePrefab<GTerra>("Terra", tmpX, tmpY, Map);
-                tmpTerra.SetOwner(FTurn);
-                return true;
+                return CreateTerraPrefab(tmpX, tmpY);
             }
             return false;
+        }
+
+        private bool CreateTerraPrefab(int aX, int aY)
+        {
+            GUtils.CreatePrefab<GTerra>("Terra", aX, aY, Map).SetOwner(FTurn);
+
+            if (FTurn == GOwner.Main)
+                SetPlayerValue(FPlayerValue + 1);
+            else
+                SetEnemyValue(FEnemyValue + 1);
+
+            if (Mathf.Sqrt(FPlayerValue + FEnemyValue) + 1 == FMapSize + 1)
+            {
+                SetTurn(GOwner.Enemy);
+                ShowResult();
+            }
+
+            return true;
         }
 
         private void CreateWallPrefab(GPoint aSource, GPoint aTarget)
