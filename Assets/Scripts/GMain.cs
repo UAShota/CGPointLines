@@ -8,6 +8,8 @@ namespace GCrazyGames
 {
     public class GMain : MonoBehaviour
     {
+        public GameObject Game;
+        public GameObject Menu;
         public Transform Map;
         public GameObject Enemy;
         public GameObject Player;
@@ -18,26 +20,7 @@ namespace GCrazyGames
         private GPoint TargetPoint;
         private GOwner FTurn;
         private int FMapSize;
-
-        public void Start()
-        {
-            int ciSize = 6;
-            FMapSize = ciSize - 1;
-
-            FPoints = new GPoint[ciSize, ciSize];
-            for (int tmpX = 0; tmpX < ciSize; tmpX++)
-            {
-                for (int tmpY = 0; tmpY < ciSize; tmpY++)
-                {
-                    FPoints[tmpX, tmpY] = GUtils.CreatePrefab<GPoint>("Point", tmpX * 2, tmpY * 2, Map);
-                    FPoints[tmpX, tmpY].Init(this, tmpX, tmpY);
-                }
-            }
-
-            //    GameOver.SetActive(false);
-
-            SetTurn(GOwner.Main);
-        }
+        private int FLevel;
 
         public void BeginDrag(GPoint aPoint)
         {
@@ -92,9 +75,66 @@ namespace GCrazyGames
             }
         }
 
-        public void Restart()
+        public void GoToMenu()
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Clean();
+            Game.SetActive(false);
+            Menu.SetActive(true);
+        }
+
+        public void GoToRestart()
+        {
+            Clean();
+            StartGame(FLevel);
+        }
+
+        public void GoToLvl1()
+        {
+            StartGame(1);
+        }
+
+        public void GoToLvl2()
+        {
+            StartGame(2);
+        }
+
+        public void GoToLvl3()
+        {
+            StartGame(3);
+        }
+
+        public void StartGame(int aLevel)
+        {
+            Menu.SetActive(false);
+            Game.SetActive(true);
+            Camera.main.transform.position = new Vector3(3 + aLevel - 1, 3 + aLevel - 1, Camera.main.transform.position.z);
+
+            var tmpSize = aLevel switch
+            {
+                1 => 4,
+                2 => 5,
+                _ => 6,
+            };
+            FLevel = aLevel;
+            FMapSize = tmpSize - 1;
+
+            FPoints = new GPoint[tmpSize, tmpSize];
+            for (int tmpX = 0; tmpX < tmpSize; tmpX++)
+            {
+                for (int tmpY = 0; tmpY < tmpSize; tmpY++)
+                {
+                    FPoints[tmpX, tmpY] = GUtils.CreatePrefab<GPoint>("Point", tmpX * 2, tmpY * 2, Map);
+                    FPoints[tmpX, tmpY].Init(this, tmpX, tmpY);
+                }
+            }
+
+            SetTurn(GOwner.Main);
+        }
+
+        private void Clean()
+        {
+            for (int tmpIndex = 0; tmpIndex < Map.childCount; tmpIndex++)
+                Destroy(Map.GetChild(tmpIndex).gameObject);
         }
 
         private void SetTurn(GOwner aOwner)
