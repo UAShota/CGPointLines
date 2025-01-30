@@ -5,6 +5,10 @@ namespace GCrazyGames
 {
     public class GTerra : GObject
     {
+        public AudioSource SoundRenderer;
+        public AudioClip SoundMain;
+        public AudioClip SoundEnemy;
+
         private IEnumerator Blink()
         {
             for (float tmpI = 0; tmpI < 1f; tmpI += 0.1f)
@@ -22,6 +26,11 @@ namespace GCrazyGames
             {
                 transform.localScale = new Vector3(0, 0, 0);
                 StartCoroutine(Blink());
+                SoundRenderer.PlayOneShot(SoundEnemy);
+            }
+            else
+            {
+                SoundRenderer.PlayOneShot(SoundMain);
             }
         }
     }

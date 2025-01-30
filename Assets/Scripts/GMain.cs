@@ -34,7 +34,7 @@ namespace GCrazyGames
                 }
             }
 
-            GameOver.SetActive(false);
+            //    GameOver.SetActive(false);
 
             SetTurn(GOwner.Main);
         }
@@ -189,6 +189,8 @@ namespace GCrazyGames
                 }
             }
 
+            yield return new WaitForSeconds(1);
+
             SetTurn(GOwner.Main);
 
             yield return null;
@@ -261,23 +263,29 @@ namespace GCrazyGames
         {
             CreateWallPrefab(aSource, aTarget);
 
+            bool tmpL;
+            bool tmpR;
+
             if (aSource.Y == aTarget.Y)
             {
                 FindEdgeY(aSource.Links, aSource.Y, out GPoint tmpLeft, out GPoint tmpRight);
                 FindEdgeY(aTarget.Links, aSource.Y, out GPoint tmpCounterLeft, out GPoint tmpCounterRight);
-                FindTerraY(aSource, aTarget, tmpLeft, tmpCounterLeft, -1);
-                FindTerraY(aSource, aTarget, tmpRight, tmpCounterRight, +1);
+                tmpL = FindTerraY(aSource, aTarget, tmpLeft, tmpCounterLeft, -1);
+                tmpR = FindTerraY(aSource, aTarget, tmpRight, tmpCounterRight, +1);
             }
             else
             {
                 FindEdgeX(aSource.Links, aSource.X, out GPoint tmpLeft, out GPoint tmpRight);
                 FindEdgeX(aTarget.Links, aSource.X, out GPoint tmpCounterLeft, out GPoint tmpCounterRight);
-                FindTerraX(aSource, aTarget, tmpLeft, tmpCounterLeft, -1);
-                FindTerraX(aSource, aTarget, tmpRight, tmpCounterRight, +1);
+                tmpL = FindTerraX(aSource, aTarget, tmpLeft, tmpCounterLeft, -1);
+                tmpR = FindTerraX(aSource, aTarget, tmpRight, tmpCounterRight, +1);
             }
 
-            SetTurn(GOwner.Enemy);
-            StartCoroutine(AiStep());
+            if (!tmpL && !tmpR)
+            {
+                SetTurn(GOwner.Enemy);
+                StartCoroutine(AiStep());
+            }
         }
 
         private void SelectTargetPoints(bool aIsTargeted)

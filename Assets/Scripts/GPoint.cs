@@ -28,7 +28,7 @@ namespace GCrazyGames
             if (!aSelected && FIsTargeted)
                 MatRenderer.material.color = Color.yellow;
             else if (aSelected)
-                MatRenderer.material.color = Color.blue;
+                MatRenderer.material.color = GUtils.IntToColor(0x72D7F300);
         }
 
         public void MarkTarget(bool aIsTargeted)

@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3888156963ae34b4d86329213ffd987a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MatFree: {fileID: 2100000, guid: 9e67850fd1e49464880e95e7b5530331, type: 2}
+  MatFree: {fileID: 2100000, guid: c54cf110940283c4ba6a34643d1466bc, type: 2}
   MatMain: {fileID: 2100000, guid: 139d704075519be44873e4e904bec0fb, type: 2}
   MatEnemy: {fileID: 2100000, guid: c20869eb6c8a92540b345d61936a8b3a, type: 2}
   MatRenderer: {fileID: 4047516193233067123}
