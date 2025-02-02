@@ -137,7 +137,7 @@ namespace GCrazyGames
         /// <summary>
         /// Checker for point-to-point actions
         /// </summary>
-        /// <param name="aPoint"></param>
+        /// <param name="aPoint">Current point under the drag</param>
         public void CheckEnter(GPoint aPoint)
         {
             if (ActivePoint == null)
@@ -231,7 +231,7 @@ namespace GCrazyGames
             };
             FLevel = aLevel;
             FMapSize = tmpSize - 1;
-            // Vreate the cube-point prefabs
+            // Create the cube-point prefabs
             FPoints = new GPoint[tmpSize, tmpSize];
             for (int tmpX = 0; tmpX < tmpSize; tmpX++)
             {
@@ -301,7 +301,7 @@ namespace GCrazyGames
         /// <summary>
         /// Change turn owner
         /// </summary>
-        /// <param name="aOwner"></param>
+        /// <param name="aOwner">Next owner</param>
         private void SetTurn(GOwner aOwner)
         {
             // Game is ended, animated is active
