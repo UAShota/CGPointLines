@@ -590,12 +590,12 @@ namespace GCrazyGames
         private void SelectTargetPoints(bool aIsTargeted)
         {
             for (var tmpX = ActivePoint.X - 1; tmpX <= ActivePoint.X + 1; tmpX++)
-                if (tmpX >= 0 && tmpX < FMapSize && tmpX != ActivePoint.X)
+                if (tmpX >= 0 && tmpX <= FMapSize && tmpX != ActivePoint.X)
                     if (!aIsTargeted || !ActivePoint.Links.Contains(FPoints[tmpX, ActivePoint.Y]))
                         FPoints[tmpX, ActivePoint.Y].MarkTarget(aIsTargeted);
 
             for (var tmpY = ActivePoint.Y - 1; tmpY <= ActivePoint.Y + 1; tmpY++)
-                if (tmpY >= 0 && tmpY < FMapSize && tmpY != ActivePoint.Y)
+                if (tmpY >= 0 && tmpY <= FMapSize && tmpY != ActivePoint.Y)
                     if (!aIsTargeted || !ActivePoint.Links.Contains(FPoints[ActivePoint.X, tmpY]))
                         FPoints[ActivePoint.X, tmpY].MarkTarget(aIsTargeted);
         }

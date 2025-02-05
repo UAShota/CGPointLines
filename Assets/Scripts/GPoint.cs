@@ -59,7 +59,7 @@ namespace GCrazyGames
             if (!aSelected && FIsTargeted)
                 MatRenderer.material.color = Color.yellow;
             else if (aSelected)
-                MatRenderer.material.color = GUtils.IntToColor(0x72D7F300);
+                MatRenderer.material.color = GUtils.IntToColor(0xAFB6FF00);
         }
 
         /// <summary>

@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MatFree: {fileID: 2100000, guid: c54cf110940283c4ba6a34643d1466bc, type: 2}
-  MatMain: {fileID: 2100000, guid: 139d704075519be44873e4e904bec0fb, type: 2}
-  MatEnemy: {fileID: 2100000, guid: c20869eb6c8a92540b345d61936a8b3a, type: 2}
+  MatMain: {fileID: 0}
+  MatEnemy: {fileID: 0}
   MatRenderer: {fileID: 4047516193233067123}
   Line: {fileID: 4604696276310937648}
 --- !u!65 &3434284198770175983
@@ -137,7 +137,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9e67850fd1e49464880e95e7b5530331, type: 2}
+  - {fileID: 2100000, guid: c54cf110940283c4ba6a34643d1466bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -215,7 +215,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9e67850fd1e49464880e95e7b5530331, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -241,7 +241,7 @@ LineRenderer:
   - {x: -6.09, y: -2.84, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.2
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -259,8 +259,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 1, g: 0.40030137, b: 0, a: 1}
+      key1: {r: 0.8792453, g: 0.1689404, b: 0, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -284,7 +284,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
