@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Services.Analytics;
-using Unity.Services.Core;
-using Unity.Services.Core.Analytics;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
@@ -96,17 +93,26 @@ namespace GCrazyGames
         /// Enemy point count
         /// </summary>
         private int FEnemyValue;
+        /// <summary>
+        /// The game stub name
+        /// </summary>
+        private const string csGameName = "point_lines";
 
         /// <summary>
         /// Mono scene start
         /// </summary>
         public async void Start()
         {
-            Debug.Log("1");
-            await UnityServices.InitializeAsync();
-            AnalyticsService.Instance.StartDataCollection();
-            Debug.Log("2");
-            GoToMenu();
+            await GAnalytics.Init(csGameName);
+            NavigationToMenu();
+        }
+
+        /// <summary>
+        /// Mono scene end
+        /// </summary>
+        public void OnDestroy()
+        {
+            GAnalytics.Done();
         }
 
         /// <summary>
@@ -181,60 +187,6 @@ namespace GCrazyGames
         }
 
         /// <summary>
-        /// UI go to Menu
-        /// </summary>
-        public void GoToMenu()
-        {
-            Clean();
-            Result.SetActive(false);
-            Game.SetActive(false);
-            Menu.SetActive(true);
-        }
-
-        /// <summary>
-        /// UI go to Restart
-        /// </summary>
-        public void GoToRestart()
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>()
-            {
-                { "levelName", "level1"}
-            };
-
-            // The ‘levelCompleted’ event will get cached locally
-            //and sent during the next scheduled upload, within 1 minute
-            AnalyticsService.Instance.RecordEvent("leveluuuuuuuuuuuuu");
-
-
-            Clean();
-            StartGame(FLevel);
-        }
-
-        /// <summary>
-        /// UI select lvl1 the game
-        /// </summary>
-        public void GoToLvl1()
-        {
-            StartGame(1);
-        }
-
-        /// <summary>
-        /// UI select lvl2 the game
-        /// </summary>
-        public void GoToLvl2()
-        {
-            StartGame(2);
-        }
-
-        /// <summary>
-        /// UI select lvl3 the game
-        /// </summary>
-        public void GoToLvl3()
-        {
-            StartGame(3);
-        }
-
-        /// <summary>
         /// Starting the new a game with selected level
         /// </summary>
         public void StartGame(int aLevel)
@@ -268,9 +220,38 @@ namespace GCrazyGames
         }
 
         /// <summary>
+        /// UI go to Menu
+        /// </summary>
+        public void UIGoToMenu()
+        {
+            NavigationToMenu();
+            GAnalytics.GoToMenu();
+        }
+
+        /// <summary>
+        /// UI go to Restart
+        /// </summary>
+        public void UIGoToRestart()
+        {
+            Clean();
+            StartGame(FLevel);
+            GAnalytics.RestartGame(FLevel);
+        }
+
+        /// <summary>
+        /// UI selecting lvl of the game
+        /// </summary>
+        public void UIGoToLvl(int aLevel)
+        {
+            FLevel = aLevel;
+            StartGame(aLevel);
+            GAnalytics.StartGame(aLevel, Localization.GetSelectedLocale().name);
+        }
+
+        /// <summary>
         /// Select the next localization
         /// </summary>
-        public void NextLanguage()
+        public void UINextLanguage()
         {
             var tmpLocale = Localization.GetSelectedLocale();
             var tmpLocales = Localization.GetAvailableLocales().Locales;
@@ -279,6 +260,17 @@ namespace GCrazyGames
                 Localization.SetSelectedLocale(tmpLocales[tmpIndex + 1]);
             else
                 Localization.SetSelectedLocale(tmpLocales[0]);
+        }
+
+        /// <summary>
+        /// Ingame menu renderer
+        /// </summary>
+        private void NavigationToMenu()
+        {
+            Clean();
+            Result.SetActive(false);
+            Game.SetActive(false);
+            Menu.SetActive(true);
         }
 
         /// <summary>
@@ -304,11 +296,20 @@ namespace GCrazyGames
             PlayerWin.gameObject.SetActive(false);
             // Enable actually
             if (FEnemyValue > FPlayerValue)
+            {
                 EnemyWin.gameObject.SetActive(true);
+                GAnalytics.ResultLoose(FLevel);
+            }
             else if (FEnemyValue < FPlayerValue)
+            {
                 PlayerWin.gameObject.SetActive(true);
+                GAnalytics.ResultWin(FLevel);
+            }
             else
+            {
                 FriendlyWin.gameObject.SetActive(true);
+                GAnalytics.ResultDraw(FLevel);
+            }
             // Disable intercative controls for the cubes
             SetTurn(GOwner.Enemy);
             Result.SetActive(true);
