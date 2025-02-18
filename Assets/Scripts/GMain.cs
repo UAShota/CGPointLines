@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Services.Analytics;
+using Unity.Services.Core;
+using Unity.Services.Core.Analytics;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 namespace GCrazyGames
 {
@@ -55,6 +59,10 @@ namespace GCrazyGames
         /// Draw win text
         /// </summary>
         public TMP_Text FriendlyWin;
+        /// <summary>
+        /// Localizations
+        /// </summary>
+        public LocalizationSettings Localization;
 
         /// <summary>
         /// Cube array of points
@@ -92,8 +100,12 @@ namespace GCrazyGames
         /// <summary>
         /// Mono scene start
         /// </summary>
-        public void Start()
+        public async void Start()
         {
+            Debug.Log("1");
+            await UnityServices.InitializeAsync();
+            AnalyticsService.Instance.StartDataCollection();
+            Debug.Log("2");
             GoToMenu();
         }
 
@@ -184,6 +196,16 @@ namespace GCrazyGames
         /// </summary>
         public void GoToRestart()
         {
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "levelName", "level1"}
+            };
+
+            // The ‘levelCompleted’ event will get cached locally
+            //and sent during the next scheduled upload, within 1 minute
+            AnalyticsService.Instance.RecordEvent("leveluuuuuuuuuuuuu");
+
+
             Clean();
             StartGame(FLevel);
         }
@@ -243,6 +265,20 @@ namespace GCrazyGames
             }
             // First step always by user
             SetTurn(GOwner.Main);
+        }
+
+        /// <summary>
+        /// Select the next localization
+        /// </summary>
+        public void NextLanguage()
+        {
+            var tmpLocale = Localization.GetSelectedLocale();
+            var tmpLocales = Localization.GetAvailableLocales().Locales;
+            var tmpIndex = tmpLocales.IndexOf(tmpLocale);
+            if (tmpIndex < tmpLocales.Count - 1)
+                Localization.SetSelectedLocale(tmpLocales[tmpIndex + 1]);
+            else
+                Localization.SetSelectedLocale(tmpLocales[0]);
         }
 
         /// <summary>
