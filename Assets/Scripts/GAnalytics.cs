@@ -13,6 +13,8 @@ namespace GCrazyGames
     /// </summary>
     internal class GAnalyticsEvent : Event
     {
+        #region Methods
+
         /// <summary>
         /// Similar event construction
         /// </summary>
@@ -36,6 +38,8 @@ namespace GCrazyGames
         /// <param name="aValue">Param value</param>
         internal void SetInt(string aName, int aValue)
             => SetParameter(aName, aValue);
+
+        #endregion
     }
 
     /// <summary>
@@ -43,6 +47,8 @@ namespace GCrazyGames
     /// </summary>
     internal static class GAnalytics
     {
+        #region Variables
+
         /// <summary>
         /// Default analytics event/param preffix
         /// </summary>
@@ -51,6 +57,10 @@ namespace GCrazyGames
         /// The current game
         /// </summary>
         private static string FGameName;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Async class initializer
@@ -191,5 +201,7 @@ namespace GCrazyGames
                 Debug.LogErrorFormat("GA send failed, {0}", E.Message);
             }
         }
+
+        #endregion
     }
 }

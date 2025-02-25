@@ -10,8 +10,10 @@ namespace GCrazyGames
     /// <summary>
     /// Main game worker
     /// </summary>
-    public class GMain : MonoBehaviour
+    internal class GMain : MonoBehaviour
     {
+        #region Mono fields
+
         /// <summary>
         /// The game panel
         /// </summary>
@@ -61,6 +63,10 @@ namespace GCrazyGames
         /// </summary>
         public LocalizationSettings Localization;
 
+        #endregion
+
+        #region Variables
+
         /// <summary>
         /// Cube array of points
         /// </summary>
@@ -98,6 +104,10 @@ namespace GCrazyGames
         /// </summary>
         private const string csGameName = "point_lines";
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Mono scene start
         /// </summary>
@@ -113,77 +123,6 @@ namespace GCrazyGames
         public void OnDestroy()
         {
             GAnalytics.Done();
-        }
-
-        /// <summary>
-        /// Callback for start dragging
-        /// </summary>
-        /// <param name="aPoint">Drag object</param>
-        public void BeginDrag(GPoint aPoint)
-        {
-            // Cube-to-cube selection
-            if (aPoint.Line.enabled)
-                return;
-            else
-                aPoint.Line.enabled = true;
-            // Accept the target cube
-            if (aPoint.Owner != GOwner.Enemy)
-            {
-                ActivePoint = aPoint;
-                aPoint.MarkSelected(true);
-                SelectTargetPoints(true);
-            }
-        }
-
-        /// <summary>
-        /// Callback for end of dragging
-        /// </summary>
-        /// <param name="aPoint">Object under drag</param>
-        public void EndDrag(GPoint aPoint)
-        {
-            if (TargetPoint != null && TargetPoint != ActivePoint)
-                CreateWall(ActivePoint, TargetPoint);
-            // Disable current line
-            aPoint.Line.enabled = false;
-            aPoint.MarkTarget(false);
-            // Disable selecting for other cubes
-            SelectTargetPoints(false);
-            ActivePoint = null;
-            TargetPoint = null;
-        }
-
-        /// <summary>
-        /// Checker for point-to-point actions
-        /// </summary>
-        /// <param name="aPoint">Current point under the drag</param>
-        public void CheckEnter(GPoint aPoint)
-        {
-            if (ActivePoint == null)
-                return;
-            if (ActivePoint == aPoint)
-                return;
-            if (ActivePoint.Links.Contains(aPoint))
-                return;
-            // Can select x/y similar coords
-            if (aPoint.X == ActivePoint.X && (aPoint.Y == ActivePoint.Y - 1 || aPoint.Y == ActivePoint.Y + 1)
-                || aPoint.Y == ActivePoint.Y && (aPoint.X == ActivePoint.X - 1 || aPoint.X == ActivePoint.X + 1))
-            {
-                aPoint.MarkSelected(true);
-                TargetPoint = aPoint;
-            }
-        }
-
-        /// <summary>
-        /// Unselecting active points
-        /// </summary>
-        /// <param name="aPoint">Current point under the drag</param>
-        public void CheckExit(GPoint aPoint)
-        {
-            if (ActivePoint != aPoint && ActivePoint != null)
-            {
-                TargetPoint = null;
-                aPoint.MarkSelected(false);
-            }
         }
 
         /// <summary>
@@ -211,8 +150,14 @@ namespace GCrazyGames
             {
                 for (int tmpY = 0; tmpY < tmpSize; tmpY++)
                 {
-                    FPoints[tmpX, tmpY] = GUtils.CreatePrefab<GPoint>("Point", tmpX * 2, tmpY * 2, Map);
-                    FPoints[tmpX, tmpY].Init(this, tmpX, tmpY);
+                    var tmpPoint = GUtils.CreatePrefab<GPoint>("Point", tmpX * 2, tmpY * 2, Map);
+                    tmpPoint.Init(tmpX, tmpY);
+                    tmpPoint.OnTouchBeginDrag += DoPointBeginDrag;
+                    tmpPoint.OnTouchDrag += DoPointDrag;
+                    tmpPoint.OnTouchEndDrag += DoPointEndDrag;
+                    tmpPoint.OnTouchOverEnter += DoPointCheckEnter;
+                    tmpPoint.OnTouchOverLeave += DoPointCheckLeave;
+                    FPoints[tmpX, tmpY] = tmpPoint;
                 }
             }
             // First step always by user
@@ -260,6 +205,93 @@ namespace GCrazyGames
                 Localization.SetSelectedLocale(tmpLocales[tmpIndex + 1]);
             else
                 Localization.SetSelectedLocale(tmpLocales[0]);
+        }
+
+        /// <summary>
+        /// Callback for start dragging
+        /// </summary>
+        /// <param name="aPoint">Drag object</param>
+        private void DoPointBeginDrag(GTouchObject aPoint)
+        {
+            var tmpPoint = (GPoint)aPoint;
+            // Cube-to-cube selection
+            if (tmpPoint.Line.enabled)
+                return;
+            else
+                tmpPoint.Line.enabled = true;
+        }
+
+        /// <summary>
+        /// Callback for dragging
+        /// </summary>
+        /// <param name="aPoint">Drag object</param>
+        private void DoPointDrag(GTouchObject aPoint)
+        {
+            var tmpPoint = (GPoint)aPoint;
+            // Accept the target cube
+            if (tmpPoint.Owner != GOwner.Enemy)
+            {
+                ActivePoint = tmpPoint;
+                tmpPoint.MarkSelected(true);
+                SelectTargetPoints(true);
+            }
+        }
+
+        /// <summary>
+        /// Callback for end of dragging
+        /// </summary>
+        /// <param name="aPoint">Object under drag</param>
+        private void DoPointEndDrag(GTouchObject aPoint)
+        {
+            var tmpPoint = (GPoint)aPoint;
+            // Create a new the wall
+            if (TargetPoint != null && TargetPoint != ActivePoint)
+                CreateWall(ActivePoint, TargetPoint);
+            // Disable current line
+            tmpPoint.Line.enabled = false;
+            tmpPoint.MarkTarget(false);
+            // Disable selecting for other cubes
+            SelectTargetPoints(false);
+            ActivePoint = null;
+            TargetPoint = null;
+        }
+
+        /// <summary>
+        /// Checker for point-to-point actions
+        /// </summary>
+        /// <param name="aPoint">Current point under the drag</param>
+        private void DoPointCheckEnter(GTouchObject aPoint)
+        {
+            var tmpPoint = (GPoint)aPoint;
+            // Check current values
+            if (ActivePoint == null)
+                return;
+            if (ActivePoint == tmpPoint)
+                return;
+            if (ActivePoint.Links.Contains(tmpPoint))
+                return;
+            // Can select x/y similar coords
+            if (tmpPoint.X == ActivePoint.X && (tmpPoint.Y == ActivePoint.Y - 1 || tmpPoint.Y == ActivePoint.Y + 1)
+                || tmpPoint.Y == ActivePoint.Y && (tmpPoint.X == ActivePoint.X - 1 || tmpPoint.X == ActivePoint.X + 1))
+            {
+                tmpPoint.MarkSelected(true);
+                TargetPoint = tmpPoint;
+            }
+        }
+
+        /// <summary>
+        /// Unselecting active points
+        /// </summary>
+        /// <param name="aPoint">Current point under the drag</param>
+        private void DoPointCheckLeave(GTouchObject aPoint)
+        {
+            var tmpPoint = (GPoint)aPoint;
+            // Check current values
+            if (ActivePoint != tmpPoint && ActivePoint != null)
+            {
+                TargetPoint = null;
+                tmpPoint.MarkSelected(false);
+            }
         }
 
         /// <summary>
@@ -636,5 +668,7 @@ namespace GCrazyGames
                     if (!aIsTargeted || !ActivePoint.Links.Contains(FPoints[ActivePoint.X, tmpY]))
                         FPoints[ActivePoint.X, tmpY].MarkTarget(aIsTargeted);
         }
+
+        #endregion
     }
 }

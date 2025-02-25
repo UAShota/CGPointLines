@@ -7,6 +7,8 @@ namespace GCrazyGames
     /// </summary>
     public enum GOwner
     {
+        #region Types
+
         /// <summary>
         /// Unassigned
         /// </summary>
@@ -19,13 +21,18 @@ namespace GCrazyGames
         /// Counter
         /// </summary>
         Enemy
+
+        #endregion
     }
+
 
     /// <summary>
     /// Game utils
     /// </summary>
     public static class GUtils
     {
+        #region Methods
+
         /// <summary>
         /// Prefab manager
         /// </summary>
@@ -44,10 +51,11 @@ namespace GCrazyGames
         /// <summary>
         /// Getting the coords of the mouse in the world
         /// </summary>
+        /// <param name="aPosition">Current world coordinates</param>
         /// <returns>Translated mouse position</returns>
-        public static Vector3 GetMousePos()
+        public static Vector3 GetMousePos(Vector3 aPosition)
         {
-            var tmpCursorPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
+            var tmpCursorPos = new Vector3(aPosition.x, aPosition.y, -Camera.main.transform.position.z);
             return Camera.main.ScreenToWorldPoint(tmpCursorPos);
         }
 
@@ -65,5 +73,7 @@ namespace GCrazyGames
             LResult.r = (byte)((aColor >> 24) & 0xFF);
             return LResult;
         }
+
+        #endregion
     }
 }

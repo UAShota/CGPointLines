@@ -5,8 +5,10 @@ namespace GCrazyGames
     /// <summary>
     /// Base game object
     /// </summary>
-    public class GObject : MonoBehaviour
+    internal class GObject : GTouchObject
     {
+        #region Mono properties
+
         /// <summary>
         /// Default material
         /// </summary>
@@ -24,16 +26,20 @@ namespace GCrazyGames
         /// </summary>
         public Renderer MatRenderer;
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Object owner
         /// </summary>
-        public GOwner Owner { get; private set; }
+        internal GOwner Owner { get; private set; }
 
         /// <summary>
         /// Owner setter
         /// </summary>
         /// <param name="aOwner">Owner</param>
-        public virtual void SetOwner(GOwner aOwner)
+        internal virtual void SetOwner(GOwner aOwner)
         {
             MatRenderer.material = aOwner switch
             {
@@ -43,5 +49,7 @@ namespace GCrazyGames
             };
             Owner = aOwner;
         }
+
+        #endregion
     }
 }

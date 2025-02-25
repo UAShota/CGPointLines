@@ -6,8 +6,10 @@ namespace GCrazyGames
     /// <summary>
     /// Quadro corner object
     /// </summary>
-    public class GTerra : GObject
+    internal class GTerra : GObject
     {
+        #region Mono fields
+
         /// <summary>
         /// Sound renderer
         /// </summary>
@@ -20,6 +22,10 @@ namespace GCrazyGames
         /// Enemy awake sound
         /// </summary>
         public AudioClip SoundEnemy;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Enemy animated show
@@ -39,7 +45,7 @@ namespace GCrazyGames
         /// Setting owner type of object
         /// </summary>
         /// <param name="aOwner">Owner type</param>
-        public override void SetOwner(GOwner aOwner)
+        internal override void SetOwner(GOwner aOwner)
         {
             base.SetOwner(aOwner);
             if (aOwner == GOwner.Enemy)
@@ -53,5 +59,7 @@ namespace GCrazyGames
                 SoundRenderer.PlayOneShot(SoundMain);
             }
         }
+
+        #endregion
     }
 }

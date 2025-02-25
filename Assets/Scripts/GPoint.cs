@@ -6,8 +6,10 @@ namespace GCrazyGames
     /// <summary>
     /// Base draggable object
     /// </summary>
-    public class GPoint : GObject
+    internal class GPoint : GObject
     {
+        #region Variables
+
         /// <summary>
         /// Drag line object
         /// </summary>
@@ -27,25 +29,23 @@ namespace GCrazyGames
         public int Y { get; private set; }
 
         /// <summary>
-        /// Main worker vs delegates
-        /// </summary>
-        private GMain FMain;
-        /// <summary>
         /// Selected property
         /// </summary>
         private bool FIsTargeted;
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Base constructor
         /// </summary>
-        /// <param name="aMain">Main worker</param>
         /// <param name="aX">Coord by X</param>
         /// <param name="aY">Coord by Y</param>
-        public void Init(GMain aMain, int aX, int aY)
+        public void Init(int aX, int aY)
         {
             X = aX;
             Y = aY;
-            FMain = aMain;
             Links = new();
             SetOwner(GOwner.Free);
         }
@@ -85,38 +85,6 @@ namespace GCrazyGames
         }
 
         /// <summary>
-        /// Mono drag event
-        /// </summary>
-        private void OnMouseDrag()
-        {
-            FMain.BeginDrag(this);
-        }
-
-        /// <summary>
-        /// Mono enter event
-        /// </summary>
-        private void OnMouseEnter()
-        {
-            FMain.CheckEnter(this);
-        }
-
-        /// <summary>
-        /// Mono exit event
-        /// </summary>
-        private void OnMouseExit()
-        {
-            FMain.CheckExit(this);
-        }
-
-        /// <summary>
-        /// Mono click event
-        /// </summary>
-        private void OnMouseUp()
-        {
-            FMain.EndDrag(this);
-        }
-
-        /// <summary>
         /// Mono frame update
         /// </summary>
         private void Update()
@@ -124,8 +92,10 @@ namespace GCrazyGames
             if (Line.enabled)
             {
                 Line.SetPosition(0, transform.position);
-                Line.SetPosition(1, GUtils.GetMousePos());
+                Line.SetPosition(1, GUtils.GetMousePos(TouchPosition));
             }
         }
+
+        #endregion
     }
 }
