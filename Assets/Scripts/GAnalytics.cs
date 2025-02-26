@@ -86,14 +86,6 @@ namespace GCrazyGames
         /// </summary>
         internal static void Done()
         {
-            try
-            {
-                AnalyticsService.Instance.StopDataCollection();
-            }
-            catch (Exception E)
-            {
-                Debug.LogErrorFormat("GA stop failed, {0}", E.Message);
-            }
         }
 
         /// <summary>

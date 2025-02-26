@@ -100,6 +100,10 @@ namespace GCrazyGames
         /// </summary>
         private int FEnemyValue;
         /// <summary>
+        /// AI coroutine
+        /// </summary>
+        private Coroutine FCoroutineAI = null;
+        /// <summary>
         /// The game stub name
         /// </summary>
         private const string csGameName = "point_lines";
@@ -310,6 +314,8 @@ namespace GCrazyGames
         /// </summary>
         private void Clean()
         {
+            if (FCoroutineAI != null)
+                StopCoroutine(FCoroutineAI);
             for (int tmpIndex = 0; tmpIndex < Map.childCount; tmpIndex++)
                 Destroy(Map.GetChild(tmpIndex).gameObject);
             SetPlayerValue(0);
@@ -648,7 +654,7 @@ namespace GCrazyGames
             if (!tmpL && !tmpR)
             {
                 SetTurn(GOwner.Enemy);
-                StartCoroutine(AiStep());
+                FCoroutineAI = StartCoroutine(AiStep());
             }
         }
 
